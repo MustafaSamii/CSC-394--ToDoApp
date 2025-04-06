@@ -1,0 +1,92 @@
+/* static/css/styles.css */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    outline: none;
+    user-select: none;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #003366;
+    padding: 1rem;
+    color: white;
+}
+
+.header-left {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.header-left a {
+    color: white;
+    margin-left: 1rem;
+    font-weight: bold;
+    text-decoration: underline; /* Important for the About to have an underline here */
+}
+
+.header-right a {
+    color: white;
+    margin-left: 1rem;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+main {
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 80px);
+}
+
+
+
+.about {
+    max-width: 800px;
+    margin: 25px auto;
+    padding: 25px;
+    background: white;
+    box-shadow: 0px 0px 10px rgba(73, 73, 73, 0.1);
+    border-radius: 8px;
+    
+}
+
+.members {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+    padding-bottom: 50px;
+} 
+
+.role {
+    color: #878787;
+  }
+
+.card {
+    background: #fff; 
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 350px;
+}
+  
+.card img {
+    width: 50px !important;
+    height: 50px !important;
+    object-fit:cover;
+}
+
+
+@media (max-width: 600px) {
+    .header-left {
+        font-size: 1.2rem;
+    }
+    
+}

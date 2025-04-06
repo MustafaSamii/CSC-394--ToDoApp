@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="container text-center mt-5">
+    <h1 class="mb-4">Welcome to the DePaul ToDo App</h1>
+
+    {% if user.is_authenticated %}
+        <h4 class="mb-3">Your ToDos:</h4>
+
+        <!-- IN PROGRESS -->
+        {% with in_progress=todos|dictsort:"status" %}
+        <h5>In Progress</h5>
+        <ul class="list-group mb-4">
+            {% for todo in todos %}
+                {% if todo.status == 'In Progress' %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="text-start">
+                            <strong>{{ todo.name }}</strong> - <span class="badge bg-warning text-dark">{{ todo.status }}</span><br>
+                            <small>{{ todo.description }}</small>
+                        </div>
+                        <div class="d-flex">
+                            <form method="post" action="{% url 'toggle_status' todo.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success me-2">Mark Completed</button>
+                            </form>
+                            <form method="get" action="{% url 'update_todo' todo.id %}">
+                                <button type="submit" class="btn btn-sm btn-warning me-2">Edit</button>
+                            </form>
+                            <form method="post" action="{% url 'delete_todo' todo.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        {% endwith %}
+
+        <!-- COMPLETED -->
+        <h5 class="mt-4">Completed</h5>
+        <ul class="list-group mb-4">
+            {% for todo in todos %}
+                {% if todo.status == 'Completed' %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-light text-muted">
+                        <div class="text-start">
+                            <strong>{{ todo.name }}</strong> - <span class="badge bg-success">{{ todo.status }}</span><br>
+                            <small>{{ todo.description }}</small>
+                        </div>
+                        <div class="d-flex">
+                            <form method="post" action="{% url 'toggle_status' todo.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-secondary me-2">Mark In Progress</button>
+                            </form>
+                            <form method="get" action="{% url 'update_todo' todo.id %}">
+                                <button type="submit" class="btn btn-sm btn-warning me-2">Edit</button>
+                            </form>
+                            <form method="post" action="{% url 'delete_todo' todo.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+        <a href="{% url 'create_todo' %}" class="btn btn-primary">Create ToDo</a>
+    {% else %}
+        <p class="lead">
+            Please <a href="{% url 'login' %}">Login</a> or 
+            <a href="{% url 'register' %}">Register</a> to start.
+        </p>
+    {% endif %}
+</main>
+{% endblock %}
