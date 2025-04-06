@@ -6,6 +6,36 @@
     {% if user.is_authenticated %}
         <h4 class="mb-3">Your ToDos:</h4>
 
+                <!-- NOT STARTED -->
+<h5>Not Started</h5>
+<ul class="list-group mb-4">
+    {% for todo in todos %}
+        {% if todo.status == 'Not Started' %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="text-start">
+                    <strong>{{ todo.name }}</strong> - <span class="badge bg-secondary">{{ todo.status }}</span><br>
+                    <small>{{ todo.description }}</small>
+                    <small><strong>Category:</strong> {{ todo.category }}</small>
+                </div>
+                <div class="d-flex">
+                    <form method="post" action="{% url 'toggle_status' todo.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-warning me-2">Mark In Progress</button>
+                    </form>
+                    <form method="get" action="{% url 'update_todo' todo.id %}">
+                        <button type="submit" class="btn btn-sm btn-primary me-2">Edit</button>
+                    </form>
+                    <form method="post" action="{% url 'delete_todo' todo.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </div>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+
         <!-- IN PROGRESS -->
         {% with in_progress=todos|dictsort:"status" %}
         <h5>In Progress</h5>
@@ -16,6 +46,7 @@
                         <div class="text-start">
                             <strong>{{ todo.name }}</strong> - <span class="badge bg-warning text-dark">{{ todo.status }}</span><br>
                             <small>{{ todo.description }}</small>
+                            <small><strong>Category:</strong> {{ todo.category }}</small>
                         </div>
                         <div class="d-flex">
                             <form method="post" action="{% url 'toggle_status' todo.id %}">
@@ -35,6 +66,37 @@
             {% endfor %}
         </ul>
         {% endwith %}
+        <!-- END IN PROGRESS -->
+
+                    <!-- PAUSED -->
+<h5 class="mt-4">Paused</h5>
+<ul class="list-group mb-4">
+    {% for todo in todos %}
+        {% if todo.status == 'Paused' %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="text-start">
+                    <strong>{{ todo.name }}</strong> - <span class="badge bg-info text-dark">{{ todo.status }}</span><br>
+                    <small>{{ todo.description }}</small>
+                    <small><strong>Category:</strong> {{ todo.category }}</small>
+                </div>
+                <div class="d-flex">
+                    <form method="post" action="{% url 'toggle_status' todo.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success me-2">Resume</button>
+                    </form>
+                    <form method="get" action="{% url 'update_todo' todo.id %}">
+                        <button type="submit" class="btn btn-sm btn-warning me-2">Edit</button>
+                    </form>
+                    <form method="post" action="{% url 'delete_todo' todo.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </div>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
 
         <!-- COMPLETED -->
         <h5 class="mt-4">Completed</h5>
@@ -45,6 +107,7 @@
                         <div class="text-start">
                             <strong>{{ todo.name }}</strong> - <span class="badge bg-success">{{ todo.status }}</span><br>
                             <small>{{ todo.description }}</small>
+                            <small><strong>Category:</strong> {{ todo.category }}</small>
                         </div>
                         <div class="d-flex">
                             <form method="post" action="{% url 'toggle_status' todo.id %}">

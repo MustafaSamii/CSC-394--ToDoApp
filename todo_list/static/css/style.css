@@ -78,9 +78,13 @@ main {
 }
   
 .card img {
-    width: 50px !important;
-    height: 50px !important;
+    width: 150px !important;
+    height: 150px !important;
     object-fit:cover;
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+
 }
 
 
