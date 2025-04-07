@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<main class="container mt-5">
+<main class="container text-center mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Your Dashboard</h1>
     <a href="{% url 'create_todo' %}" class="btn btn-primary">New ToDo</a>
@@ -15,15 +15,22 @@
               <h5>{{ todo.name }}</h5>
               <p>{{ todo.description }}</p>
               <p><strong>Category:</strong> {{ todo.category }}</p>
-              <p><strong>Status:</strong> {{ todo.status }}</p>
-
+              <p><strong>Status:</strong>
+                {% if todo.status == "Not Started" %}
+                  <span class="badge bg-danger fw-bold">{{ todo.status }}</span>
+                {% elif todo.status == "In Progress" %}
+                  <span class="badge bg-warning text-dark fw-bold">{{ todo.status }}</span>
+                {% elif todo.status == "Paused" %}
+                  <span class="badge bg-info text-dark fw-bold">{{ todo.status }}</span>
+                {% elif todo.status == "Completed" %}
+                  <span class="badge bg-success fw-bold">{{ todo.status }}</span>
+                {% else %}
+                  <span class="badge bg-secondary fw-bold">{{ todo.status }}</span>
+                {% endif %}
+              </p>
               {% if todo.status == "In Progress" %}
                 <div>
-                  Timer:
-                <span class="timer" data-initial="{{ todo.initial_elapsed|floatformat:0 }}">
-                    {{ todo.formatted_elapsed }}
-                </span>
-
+                  Timer: <span class="timer" data-initial="{{ todo.initial_elapsed|floatformat:0 }}">{{ todo.formatted_elapsed }}</span>
                 </div>
               {% elif todo.status == "Paused" or todo.status == "Completed" %}
                 <div>
@@ -36,9 +43,10 @@
                 <a href="{% url 'update_todo_status' todo.id 'start' %}" class="btn btn-sm btn-success">Start</a>
               {% elif todo.status == "In Progress" %}
                 <a href="{% url 'update_todo_status' todo.id 'pause' %}" class="btn btn-sm btn-warning">Pause</a>
-                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Stop</a>
+                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Complete</a>
               {% elif todo.status == "Paused" %}
                 <a href="{% url 'update_todo_status' todo.id 'resume' %}" class="btn btn-sm btn-success">Resume</a>
+                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Complete</a>
               {% endif %}
               <a href="{% url 'update_todo' todo.id %}" class="btn btn-sm btn-primary">Edit</a>
               <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ todo.id }}">
@@ -75,11 +83,14 @@
       <a href="{% url 'create_todo' %}" class="btn btn-primary">Create ToDo</a>
     {% endif %}
   {% else %}
-    <p class="lead">Please <a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a> to start.</p>
+    <p class="lead">
+      Please <a href="{% url 'login' %}">Login</a> or 
+      <a href="{% url 'register' %}">Register</a> to start.
+    </p>
   {% endif %}
 </main>
 
-           <!-- Timer script for the dashboard, complicated / possibly buggy, revisit this later. -->
+<!-- Timer script for the dashboard -->
 <script>
 document.addEventListener("DOMContentLoaded", function(){
     var pageLoadTime = performance.now() / 1000;
@@ -89,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function(){
         var secs = Math.floor(seconds % 60);
         return hrs + ":" + (mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs;
     }
-
     function updateTimer(timerElem) {
         var initial = parseFloat(timerElem.getAttribute('data-initial'));
         if (!isNaN(initial)) {
@@ -106,7 +116,4 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 });
 </script>
-
-
-
 {% endblock %}
