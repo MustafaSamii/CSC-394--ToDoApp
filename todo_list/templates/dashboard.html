@@ -43,10 +43,10 @@
                 <a href="{% url 'update_todo_status' todo.id 'start' %}" class="btn btn-sm btn-success">Start</a>
               {% elif todo.status == "In Progress" %}
                 <a href="{% url 'update_todo_status' todo.id 'pause' %}" class="btn btn-sm btn-warning">Pause</a>
-                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Complete</a>
+                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Stop</a>
               {% elif todo.status == "Paused" %}
                 <a href="{% url 'update_todo_status' todo.id 'resume' %}" class="btn btn-sm btn-success">Resume</a>
-                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Complete</a>
+                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Stop</a>
               {% endif %}
               <a href="{% url 'update_todo' todo.id %}" class="btn btn-sm btn-primary">Edit</a>
               <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ todo.id }}">

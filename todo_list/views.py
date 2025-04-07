@@ -212,3 +212,36 @@ def create_team(request):
 
 def about(request):
     return render(request, 'about.html')
+
+@login_required
+def delete_team(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    team.delete()
+    messages.success(request, "Team deleted successfully.")
+    return redirect('teams_list')
+
+
+@login_required
+def toggle_status(request, todo_id):
+    todo = get_object_or_404(ToDo, id=todo_id, user=request.user)
+    now = timezone.now()
+    # Toggle between "In Progress" and "Completed"
+    if todo.status == 'In Progress' and todo.start_time:
+        # Calculate elapsed time
+        delta = now - todo.start_time
+        todo.elapsed_time = (todo.elapsed_time or timezone.timedelta(0)) + delta
+        todo.status = 'Completed'
+        todo.start_time = None
+        messages.success(request, "ToDo marked as completed.")
+    else:
+        # Otherwise, set to In Progress
+        todo.status = 'In Progress'
+        todo.start_time = now
+        messages.success(request, "ToDo marked as in progress.")
+    todo.save()
+    return redirect('dashboard')
+
+@login_required
+def todos_list(request):
+    todos = ToDo.objects.filter(user=request.user)
+    return render(request, 'dashboard.html', {'todos': todos})
