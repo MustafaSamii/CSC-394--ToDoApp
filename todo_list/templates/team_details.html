@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <!-- Display team name and description -->
+  <h2>Team: {{ team.name }}</h2>
+  <p>{{ team.description }}</p>
+  <button class="btn btn-link" id="toggleEditForm">Edit Team Details</button>
+  
+  <!-- Edit Team Details Form (hidden by default, shown when editing) -->
+  <div id="editForm" style="display:none;">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" name="update_team" class="btn btn-primary">Update Team</button>
+      <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+    </form>
+  </div>
+
+  <hr>
+
+  <h3>Team Members</h3>
+  {% if team.members.all %}
+    <ul class="list-group mb-3">
+      {% for member in team.members.all %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ member.email }}
+          <form method="post" style="margin:0;">
+            {% csrf_token %}
+            <input type="hidden" name="remove_member" value="{{ member.id }}">
+            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No members in this team.</p>
+  {% endif %}
+
+  <!-- Form for Adding a Team Member -->
+  <h3>Add Team Member</h3>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="new_member" class="form-label">Add Team Member</label>
+      <input type="email" class="form-control" id="new_member" name="new_member" placeholder="Enter member's email">
+    </div>
+    <button type="submit" class="btn btn-primary">Add Member</button>
+    <a href="{% url 'teams_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+<script>
+  // Toggle the edit form display
+  document.getElementById('toggleEditForm').addEventListener('click', function(){
+      var editForm = document.getElementById('editForm');
+      if(editForm.style.display === 'none'){
+          editForm.style.display = 'block';
+      } else {
+          editForm.style.display = 'none';
+      }
+  });
+
+  // Cancel button for the edit form hides the form without saving changes
+  document.getElementById('cancelEdit').addEventListener('click', function(){
+      document.getElementById('editForm').style.display = 'none';
+  });
+</script>
+{% endblock %}

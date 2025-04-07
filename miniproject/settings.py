@@ -119,6 +119,9 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'todo_list/static',
 ]
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <h2>Teams</h2>
+  {% if teams %}
+    <ul class="list-group">
+      {% for team in teams %}
+        <li class="list-group-item">
+          <a href="{% url 'team_details' team.id %}">{{ team.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No teams available.</p>
+  {% endif %}
+  <a href="{% url 'create_team' %}" class="btn btn-primary mt-3">Create New Team</a>
+</div>
+{% endblock %}

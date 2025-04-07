@@ -2,10 +2,34 @@
 {% block content %}
 <div class="mx-auto" style="max-width: 400px;">
     <h2>Register</h2>
-    <form method="post">
+    <form method="post" id="registrationForm">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success w-100">Sign Up</button>
+        <button type="submit" class="btn btn-success w-100" id="registerButton">Sign Up</button>
     </form>
 </div>
+    
+    <!-- Password Script Validate -->
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+    const form = document.getElementById('registrationForm');
+    const submitButton = document.getElementById('registerButton');
+    const emailField = form.querySelector('input[name="email"]');
+    const password1Field = form.querySelector('input[name="password1"]');
+    const password2Field = form.querySelector('input[name="password2"]');
+    
+    function validateForm(){
+        if(emailField.value && password1Field.value && password2Field.value && (password1Field.value === password2Field.value)){
+            submitButton.disabled = false;
+        } else {
+            submitButton.disabled = true;
+        }
+    }
+    
+    form.addEventListener('input', validateForm);
+    submitButton.disabled = true;
+});
+</script>
+    
+    
 {% endblock %}

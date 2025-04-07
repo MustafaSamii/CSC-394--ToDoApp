@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block container_start %}{% endblock %}
+{% block container_end %}{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-
 <main>
     <div class="about">
         <h1>About Us</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae...</p>
+        <p>We are a team of student developers from DePaul University who built this ToDo web app as part of a CSC-394 / IS 376 software engineering project.
+  Our goal was to create a simple and functional productivity tool using Django, Bootstrap, and PostgreSQL, wrapped in a clean and responsive UI.</p>
     </div>
 
     <div class="members">
@@ -28,14 +29,14 @@
             <h3>Sami</h3>
             <h4 class="role">Project Manager</h4>
             <p>I am a senior at DePaul University majoring in Computer Science with a strong interest in AI and Machine Learning.
-                Outside of class, I enjoy working out and staying active. When i'm not building side projects or experimenting with new code, 
-                you’ll find me gaming with friends and enjoying downtime with good company.</p>
+                Outside of class, I enjoy working out and staying active. When I'm not building side projects or experimenting with new code,
+                you'll find me gaming with friends and enjoying downtime with good company.</p>
         </div>
         <div class="card">
-            <img src="{% static 'images/amir.png' %}" alt="Amir">
+            <img src="{% static 'images/amir.jpg' %}" alt="Amir">
             <h3>Amir</h3>
             <h4 class="role">Testing Manager</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipiscing elit.</p>
+            <p>I'm a Senior at DePaul graduating this Spring, my major is in Computer Science with a concentration in software development. My main hobbies include game development and working on new apps.</p>
         </div>
     </div>
 </main>
