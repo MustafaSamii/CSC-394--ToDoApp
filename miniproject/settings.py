@@ -10,22 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os  # Added for environment variables support
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-h3gc-ij224*al(g#%47oeb$%e8vbn))(4mc^*bo$wwb%oif0cn'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "django-insecure-h3gc-ij224*al(g#%47oeb$%e8vbn))(4mc^*bo$wwb%oif0cn")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(int(os.environ.get("DEBUG", "1")))
 
-ALLOWED_HOSTS = []
+# 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a comma between each.
+# For example: 'DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1'
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
 
 
 # Application definition
@@ -42,6 +41,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for serving static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,12 +71,17 @@ WSGI_APPLICATION = 'miniproject.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+# If you want to use PostgreSQL, set environment variables appropriately.
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.' + os.getenv('DATABASE_ENGINE', 'sqlite3'),
+        # For sqlite3, the NAME should be the file path. Since os.getenv returns a string,
+        # we wrap BASE_DIR / 'db.sqlite3' in str(). For PostgreSQL, NAME can be the database name.
+        'NAME': os.getenv('DATABASE_NAME', str(BASE_DIR / 'db.sqlite3')),
+        'USER': os.getenv('DATABASE_USERNAME', ''),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD', ''),
+        'HOST': os.getenv('DATABASE_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DATABASE_PORT', 5432),
     }
 }
 
@@ -119,11 +124,13 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'todo_list/static',
 ]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Specify WhiteNoise static files storage to enable compression and caching.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
-
-
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
