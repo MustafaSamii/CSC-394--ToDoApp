@@ -51,6 +51,14 @@ class TeamForm(forms.ModelForm):
         model = Team
         fields = ['name', 'description']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Team Name'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Team Description'}),
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Team Name',
+                'required': 'required'  # Optionally enforce name as required too
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Team Description',
+                'required': 'required'
+            }),
         }

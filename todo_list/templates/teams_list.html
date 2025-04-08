@@ -14,5 +14,10 @@
     <p>No teams available.</p>
   {% endif %}
   <a href="{% url 'create_team' %}" class="btn btn-primary mt-3">Create New Team</a>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
