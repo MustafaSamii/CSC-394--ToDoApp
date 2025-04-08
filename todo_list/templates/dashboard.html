@@ -88,6 +88,12 @@
       <a href="{% url 'register' %}">Register</a> to start.
     </p>
   {% endif %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
 </main>
 
 <!-- Timer script for the dashboard -->

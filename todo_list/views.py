@@ -202,12 +202,13 @@ def create_team(request):
         if form.is_valid():
             team = form.save()
             messages.success(request, "Team created successfully!")
-            return redirect('team_details', team_id=team.id)
+            return redirect('team_details', team_id=team.id)  # important redirect
         else:
             messages.error(request, "Please correct the errors below.")
     else:
         form = TeamForm()
     return render(request, 'create_team.html', {'form': form})
+
 
 def about(request):
     return render(request, 'about.html')
