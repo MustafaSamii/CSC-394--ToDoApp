@@ -6,7 +6,7 @@ from django.db.models import Case, When, IntegerField
 from django.utils import timezone
 from .models import ToDo, Team
 from .forms import ToDoForm, CustomUserCreationForm, TeamForm
-
+from django.contrib.auth.forms import AuthenticationForm
 def landing(request):
     return render(request, 'landing.html')
 
@@ -48,16 +48,15 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 def custom_login(request):
+    form = AuthenticationForm(request, data=request.POST or None)
     if request.method == 'POST':
-        username = request.POST.get('username')  # email is stored as username
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if form.is_valid():
+            user = form.get_user()
             login(request, user)
             return redirect('dashboard')
         else:
-            messages.error(request, 'Invalid username or password.')
-    return render(request, 'login.html')
+            messages.error(request, 'Invalid email or password.')
+    return render(request, 'login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
