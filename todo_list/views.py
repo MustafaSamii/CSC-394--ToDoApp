@@ -244,4 +244,13 @@ def toggle_status(request, todo_id):
 @login_required
 def todos_list(request):
     todos = ToDo.objects.filter(user=request.user)
+
+    for todo in todos:
+        if todo.status == 'In Progress' and todo.start_time:
+            accumulated = todo.elapsed_time.total_seconds() if todo.elapsed_time else 0
+            todo.initial_elapsed = accumulated + (timezone.now() - todo.start_time).total_seconds()
+        else:
+            todo.initial_elapsed = todo.elapsed_time.total_seconds() if todo.elapsed_time else 0
+
     return render(request, 'dashboard.html', {'todos': todos})
+
