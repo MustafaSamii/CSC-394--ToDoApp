@@ -5,6 +5,8 @@ from todo_list.models import ToDo, Team
 from django.utils import timezone
 import datetime
 
+# IMPORTANT: Run   py -m pip install whitenoise if every test case here fails.
+
 # ------------------------------
 # Landing Page Tests
 # ------------------------------
