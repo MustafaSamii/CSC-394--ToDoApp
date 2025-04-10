@@ -1,15 +1,62 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="mx-auto" style="max-width: 400px;">
+<style>
+
+    .container {
+        width: 100%;
+        max-width: 700px;
+        padding: 20px;
+        height: 100vh;
+    }
+
+    .mx-auto {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+        padding: 30px;
+        width: 100%;
+    }
+
+    .btn-primary {
+        border-radius: 4px;
+        padding: 10px 20px;
+    }
+
+    h2 {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    p {
+
+    }
+
+</style>
+
+<div class="container">
+<div class="mx-auto">
     <h2>Register</h2>
     <form method="post" id="registrationForm">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-success w-100" id="registerButton">Sign Up</button>
     </form>
+
+    <p> Already have an account?  <a href="{% url 'login' %}"> Login </a> </p>
 </div>
-    
-    <!-- Password Script Validate -->
+
+<!-- Password Script Validate -->
 <script>
 document.addEventListener("DOMContentLoaded", function(){
     const form = document.getElementById('registrationForm');
@@ -30,6 +77,6 @@ document.addEventListener("DOMContentLoaded", function(){
     submitButton.disabled = true;
 });
 </script>
-    
-    
+</div>
+
 {% endblock %}

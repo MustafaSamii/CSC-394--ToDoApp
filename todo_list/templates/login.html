@@ -1,33 +1,74 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="mx-auto" style="max-width: 400px;">
-    <h2>Login</h2>
-    <form method="POST" novalidate>
-        {% csrf_token %}
+<style>
+    .container {
+        width: 100%;
+        max-width: 700px;
+        padding: 20px;
+        height: 100vh;
+    }
 
-        <div class="mb-3">
-            <input type="text" name="username" placeholder="Email" class="form-control" required>
-            {% if form.username.errors %}
-                <div class="text-danger">{{ form.username.errors.0 }}</div>
+    .mx-auto {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+        padding: 30px;
+        width: 100%;
+    }
+
+    h2 {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .btn-primary {
+        border-radius: 4px;
+        padding: 10px 20px;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+</style>
+
+<div class="container">
+    <div class="mx-auto">
+        <h2>Login</h2>
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <input type="text" name="username" placeholder="Email" class="form-control" required>
+                {% if form.username.errors %}
+                    <div class="text-danger">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <input type="password" name="password" placeholder="Password" class="form-control" required>
+                {% if form.password.errors %}
+                    <div class="text-danger">{{ form.password.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="text-danger">{{ message }}</div>
+                {% endfor %}
             {% endif %}
-        </div>
 
-        <div class="mb-3">
-            <input type="password" name="password" placeholder="Password" class="form-control" required>
-            {% if form.password.errors %}
-                <div class="text-danger">{{ form.password.errors.0 }}</div>
-            {% endif %}
-        </div>
+            <button type="submit" class="btn-primary w-100">Login</button>
+        </form>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="text-danger">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-    </form>
-
-    <p class="mt-2 text-center"><a href="{% url 'password_reset' %}">Forgot Password?</a></p>
+        <p class="mt-2 text-center"><a href="{% url 'password_reset' %}">Forgot Password?</a></p>
+    </div>
 </div>
 {% endblock %}

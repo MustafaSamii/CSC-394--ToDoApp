@@ -1,5 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+
+    .container {
+        width: 100%;
+        max-width: 700px;
+        padding: 20px;
+        height: 100vh;
+    }
+  
+    .mx-auto {
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+        padding: 30px;
+        width: 100%;
+    }
+  
+    h2 {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .btn-primary {
+        border-radius: 4px;
+        padding: 10px 20px;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+  </style>
+
+<div class = "container">
 <div class="mx-auto" style="max-width: 600px;">
     <h2>Edit ToDo</h2>
     <form method="post">
@@ -8,5 +40,6 @@
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
     </form>
+</div>
 </div>
 {% endblock %}
