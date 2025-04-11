@@ -12,7 +12,7 @@
 
     .mx-auto {
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+        box-shadow: 0 4px 12px #003366; 
         padding: 30px;
         width: 100%;
     }
@@ -47,15 +47,6 @@
 <div class="mx-auto" style="max-width: 600px;">
     <h2>Create a New ToDo</h2>
     <form method="post">
-        {% csrf_token %}
-        {% if form.errors %}
-            <div class="err-msg">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-        <br>
         <label> Name: </label> <br>
         {{ form.name }}
         <br>
@@ -75,6 +66,15 @@
         {{ form.team }}
         <br>
 
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="err-msg">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <br>
         
         <button type="submit" class="btn btn-primary">Create</button>
         <a href="{% url 'dashboard' %}" class="btn btn-link">Cancel</a>
