@@ -8,10 +8,10 @@ class ToDoForm(forms.ModelForm):
         model = ToDo
         fields = ['name', 'description', 'status', 'category', 'due_date', 'team']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Team Name',}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Team Description',}),
             'status': forms.Select(attrs={'class': 'form-select'}),
-            'category': forms.TextInput(attrs={'class': 'form-control'}),
+            'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Team Category',}),
             # New widgets:
             'due_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'team': forms.Select(attrs={'class': 'form-select'}),
@@ -54,11 +54,9 @@ class TeamForm(forms.ModelForm):
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Team Name',
-                'required': 'required'  # Optionally enforce name as required too
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Team Description',
-                'required': 'required'
             }),
         }

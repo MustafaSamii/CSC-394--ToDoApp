@@ -42,7 +42,7 @@ def register(request):
             messages.success(request, "Registration successful. Please log in.")
             return redirect('login')
         else:
-            messages.error(request, "Please correct the error(s) below.")
+            messages.error(request, "Failed To Register Succesfully. Please Try Again.")
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
@@ -77,7 +77,7 @@ def create_todo(request):
             messages.success(request, "ToDo created successfully!")
             return redirect('dashboard')
         else:
-            messages.error(request, "Please enter a name. Description and category are optional.")
+            return render(request, 'create_todo.html', {'form':form})
     else:
         form = ToDoForm()
     return render(request, "create_todo.html", {"form": form})
@@ -204,7 +204,7 @@ def create_team(request):
             messages.success(request, "Team created successfully!")
             return redirect('team_details', team_id=team.id)  # important redirect
         else:
-            messages.error(request, "Please correct the errors below.")
+            return render(request, 'create_team.html', {'form':form})
     else:
         form = TeamForm()
     return render(request, 'create_team.html', {'form': form})

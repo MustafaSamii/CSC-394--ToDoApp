@@ -31,6 +31,15 @@
         background-color: #0056b3;
     }
 
+    .err-msg {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        color: black;
+        border: solid 0.5px;
+        border-radius: 4px;
+        background: #ffb09c; 
+        padding: 2px;
+    }
 
 </style>
 
@@ -39,7 +48,34 @@
     <h2>Create a New ToDo</h2>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        {% if form.errors %}
+            <div class="err-msg">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <br>
+        <label> Name: </label> <br>
+        {{ form.name }}
+        <br>
+        <label> Description: </label>
+        {{ form.description }}
+        <br>
+        <label> Status: </label>
+        {{ form.status }}
+        <br>
+        <label> Category: </label>
+        {{ form.category }}
+        <br>
+        <label> Due Date: </label>
+        {{ form.due_date }}
+        <br>
+        <label> Team: </label>
+        {{ form.team }}
+        <br>
+
+        
         <button type="submit" class="btn btn-primary">Create</button>
         <a href="{% url 'dashboard' %}" class="btn btn-link">Cancel</a>
     </form>

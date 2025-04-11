@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 class ToDo(models.Model):
     STATUS_CHOICES = [
@@ -11,8 +12,8 @@ class ToDo(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
+    name = models.CharField(blank=True)
+    description = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Not Started')
     category = models.CharField(max_length=100, blank=True, null=True)
     # New fields:
@@ -24,6 +25,14 @@ class ToDo(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def clean(self):
+        if not self.name or not self.description:
+            raise ValidationError('Both Team Name and Description are required.')
+
+    def save(self, *args, **kwargs):
+        self.clean() 
+        super().save(*args, **kwargs) 
 
     def get_total_elapsed(self):
         """Return a timedelta of total elapsed time."""
@@ -47,9 +56,17 @@ class ToDo(models.Model):
         return f"{hrs}:{mins:02d}:{secs:02d}"
 
 class Team(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(blank=True)
     description = models.TextField(blank=True)
     members = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if not self.name or not self.description:
+            raise ValidationError('Both Team Name and Description are required.')
+
+    def save(self, *args, **kwargs):
+        self.clean() 
+        super().save(*args, **kwargs) 

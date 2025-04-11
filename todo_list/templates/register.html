@@ -38,8 +38,28 @@
         text-decoration: underline;
     }
 
-    p {
+    input[type="email"],
+    input[type="password"] {
+        box-sizing: border-box;
+        border: 1px solid #000000;
+        border-radius: 4px;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        
+    }
 
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+        border-color: #000000;
+        outline: none;
+    }
+
+    label {
+        margin-top: 10px;
+        font-weight: bold;
+        color: black; 
+        font-size: 18px;
     }
 
 </style>
@@ -49,7 +69,7 @@
     <h2>Register</h2>
     <form method="post" id="registrationForm">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form }}
         <button type="submit" class="btn btn-success w-100" id="registerButton">Sign Up</button>
     </form>
 
