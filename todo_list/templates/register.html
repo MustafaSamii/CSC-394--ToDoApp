@@ -62,11 +62,29 @@
         font-size: 18px;
     }
 
+    .text-danger{
+        margin-top: 5px;
+        margin-bottom: 5px;
+        color: black;
+        border: solid 0.5px;
+        border-radius: 4px;
+        background: #ffb09c; 
+        padding-left: 4px;
+    }
+
 </style>
 
 <div class="container">
 <div class="mx-auto">
     <h2>Register</h2>
+    {% if messages %}
+        <div class="text-danger">
+            {% for mssg in messages %}
+                {{ mssg }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <form method="post" id="registrationForm">
         {% csrf_token %}
         {{ form }}

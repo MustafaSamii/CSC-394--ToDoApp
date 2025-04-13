@@ -35,6 +35,7 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 def register(request):
+    show_messages = True
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -42,7 +43,8 @@ def register(request):
             messages.success(request, "Registration successful. Please log in.")
             return redirect('login')
         else:
-            messages.error(request, "Failed To Register Succesfully. Please Try Again.")
+            if not messages.get_messages(request):
+                messages.error(request, "Failed To Register Succesfully. Please Try Again.")
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
