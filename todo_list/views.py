@@ -203,13 +203,16 @@ def create_team(request):
         form = TeamForm(request.POST)
         if form.is_valid():
             team = form.save()
+            # Automatically add the creator as a team member
+            team.members.add(request.user)
             messages.success(request, "Team created successfully!")
-            return redirect('team_details', team_id=team.id)  # important redirect
+            return redirect('team_details', team_id=team.id)
         else:
             return render(request, 'create_team.html', {'form':form})
     else:
         form = TeamForm()
     return render(request, 'create_team.html', {'form': form})
+
 
 
 def about(request):
