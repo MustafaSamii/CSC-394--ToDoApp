@@ -13,7 +13,7 @@ class ToDo(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(blank=True)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Not Started')
     category = models.CharField(max_length=100, blank=True, null=True)
     # New fields:
@@ -27,8 +27,8 @@ class ToDo(models.Model):
         return self.name
     
     def clean(self):
-        if not self.name or not self.description:
-            raise ValidationError('Both Team Name and Description are required.')
+        if not self.name or not self.due_date:
+            raise ValidationError('To-Do Name and Due-Date are required.')
 
     def save(self, *args, **kwargs):
         self.clean() 
@@ -56,8 +56,8 @@ class ToDo(models.Model):
         return f"{hrs}:{mins:02d}:{secs:02d}"
 
 class Team(models.Model):
-    name = models.CharField(blank=True)
-    description = models.TextField(blank=True)
+    name = models.CharField()
+    description = models.TextField()
     members = models.ManyToManyField(User, blank=True)
 
     def __str__(self):
