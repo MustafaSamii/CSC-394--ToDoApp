@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
 <style>
-
   .mx-auto {
       border-radius: 8px;
       box-shadow: 0 4px 12px #003366; 
@@ -15,102 +14,106 @@
   }
 </style>
 
-<main class="container text-center mt-5">
-  <div class = "mx-auto">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Your Dashboard</h1>
-    {% if todos %}
-      <a href="{% url 'create_todo' %}" class="btn btn-primary">New ToDo</a>
-    {% endif%}
-  </div>
+<main class="container mt-5 text-start">
+  <div class="mx-auto">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="mb-0">Your Dashboard</h1>
+      {% if todos %}
+        <a href="{% url 'create_todo' %}" class="btn btn-primary">New ToDo</a>
+      {% endif %}
+    </div>
 
-  {% if user.is_authenticated %}
-    {% if todos %}
-      <ul class="list-group">
-        {% for todo in todos %}
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <h5>{{ todo.name }}</h5>
-              <p>{{ todo.description }}</p>
-              <p><strong>Category:</strong> {{ todo.category }}</p>
-              <p><strong>Status:</strong>
-                {% if todo.status == "Not Started" %}
-                  <span class="badge bg-danger fw-bold">{{ todo.status }}</span>
-                {% elif todo.status == "In Progress" %}
-                  <span class="badge bg-warning text-dark fw-bold">{{ todo.status }}</span>
-                {% elif todo.status == "Paused" %}
-                  <span class="badge bg-info text-dark fw-bold">{{ todo.status }}</span>
-                {% elif todo.status == "Completed" %}
-                  <span class="badge bg-success fw-bold">{{ todo.status }}</span>
-                {% else %}
-                  <span class="badge bg-secondary fw-bold">{{ todo.status }}</span>
+    {% if user.is_authenticated %}
+      {% if todos %}
+        <ul class="list-group">
+          {% for todo in todos %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h5>{{ todo.name }}</h5>
+                <p>{{ todo.description }}</p>
+                <p><strong>Category:</strong> {{ todo.category }}</p>
+                {# New block added for requirement R15: display team name if available #}
+                {% if todo.team %}
+                  <p><strong>Team:</strong> {{ todo.team.name }}</p>
                 {% endif %}
-              </p>
-              {% if todo.status == "In Progress" %}
-                <div>
-                  Timer: <span class="timer" data-initial="{{ todo.initial_elapsed|floatformat:0 }}">{{ todo.formatted_elapsed }}</span>
-                </div>
-              {% elif todo.status == "Paused" or todo.status == "Completed" %}
-                <div>
-                  Timer: {{ todo.formatted_elapsed }}
-                </div>
-              {% endif %}
-            </div>
-            <div class="btn-group" role="group">
-              {% if todo.status == "Not Started" or todo.status == "Completed" %}
-                <a href="{% url 'update_todo_status' todo.id 'start' %}" class="btn btn-sm btn-success">Start</a>
-              {% elif todo.status == "In Progress" %}
-                <a href="{% url 'update_todo_status' todo.id 'pause' %}" class="btn btn-sm btn-warning">Pause</a>
-                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Stop</a>
-              {% elif todo.status == "Paused" %}
-                <a href="{% url 'update_todo_status' todo.id 'resume' %}" class="btn btn-sm btn-success">Resume</a>
-                <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Stop</a>
-              {% endif %}
-              <a href="{% url 'update_todo' todo.id %}" class="btn btn-sm btn-primary">Edit</a>
-              <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ todo.id }}">
-                Delete
-              </button>
-            </div>
-          </li>
+                <p><strong>Status:</strong>
+                  {% if todo.status == "Not Started" %}
+                    <span class="badge bg-danger fw-bold">{{ todo.status }}</span>
+                  {% elif todo.status == "In Progress" %}
+                    <span class="badge bg-warning text-dark fw-bold">{{ todo.status }}</span>
+                  {% elif todo.status == "Paused" %}
+                    <span class="badge bg-info text-dark fw-bold">{{ todo.status }}</span>
+                  {% elif todo.status == "Completed" %}
+                    <span class="badge bg-success fw-bold">{{ todo.status }}</span>
+                  {% else %}
+                    <span class="badge bg-secondary fw-bold">{{ todo.status }}</span>
+                  {% endif %}
+                </p>
+                {% if todo.status == "In Progress" %}
+                  <div>
+                    Timer: <span class="timer" data-initial="{{ todo.initial_elapsed|floatformat:0 }}">{{ todo.formatted_elapsed }}</span>
+                  </div>
+                {% elif todo.status == "Paused" or todo.status == "Completed" %}
+                  <div>
+                    Timer: {{ todo.formatted_elapsed }}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="btn-group" role="group">
+                {% if todo.status == "Not Started" or todo.status == "Completed" %}
+                  <a href="{% url 'update_todo_status' todo.id 'start' %}" class="btn btn-sm btn-success">Start</a>
+                {% elif todo.status == "In Progress" %}
+                  <a href="{% url 'update_todo_status' todo.id 'pause' %}" class="btn btn-sm btn-warning">Pause</a>
+                  <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Stop</a>
+                {% elif todo.status == "Paused" %}
+                  <a href="{% url 'update_todo_status' todo.id 'resume' %}" class="btn btn-sm btn-success">Resume</a>
+                  <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Stop</a>
+                {% endif %}
+                <a href="{% url 'update_todo' todo.id %}" class="btn btn-sm btn-primary">Edit</a>
+                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ todo.id }}">
+                  Delete
+                </button>
+              </div>
+            </li>
 
-          <!-- Delete Confirmation Modal -->
-          <div class="modal fade" id="deleteModal{{ todo.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ todo.id }}" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="deleteModalLabel{{ todo.id }}">Confirm Deletion</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  Are you sure you wish to delete this item?
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                  <form method="post" action="{% url 'delete_todo' todo.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                  </form>
+            <!-- Delete Confirmation Modal -->
+            <div class="modal fade" id="deleteModal{{ todo.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ todo.id }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ todo.id }}">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you wish to delete this item?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="post" action="{% url 'delete_todo' todo.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        {% endfor %}
-      </ul>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="lead">No ToDo's</p>
+        <a href="{% url 'create_todo' %}" class="btn btn-primary">Create ToDo</a>
+      {% endif %}
     {% else %}
-      <p class="lead">No ToDo's</p>
-      <a href="{% url 'create_todo' %}" class="btn btn-primary">Create ToDo</a>
+      <p class="lead">
+        Please <a href="{% url 'login' %}">Login</a> or 
+        <a href="{% url 'register' %}">Register</a> to start.
+      </p>
     {% endif %}
-  {% else %}
-    <p class="lead">
-      Please <a href="{% url 'login' %}">Login</a> or 
-      <a href="{% url 'register' %}">Register</a> to start.
-    </p>
-  {% endif %}
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-{% endif %}
+    {% if messages %}
+      {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
   </div>
 </main>
 
