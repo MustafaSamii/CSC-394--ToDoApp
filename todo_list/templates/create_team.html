@@ -12,7 +12,7 @@
 
   .mx-auto {
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+      box-shadow: 0 4px 12px #003366; 
       padding: 30px;
       width: 100%;
   }
@@ -21,6 +21,18 @@
       text-align: center;
       padding: 20px;
   }
+
+  .err-msg {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: black;
+    border: solid 0.5px;
+    border-radius: 4px;
+    background: #ffb09c; 
+    padding: 2px;
+  }
+
+  
 </style>
 
 <div class="container mt-5" style="max-width: 600px;">
@@ -28,7 +40,20 @@
   <h2>Create Team</h2>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    <label> Name: </label> <br>
+    {{ form.name }}
+    <br><br>
+    <label> Description: </label>
+    {{ form.description }}
+    {% if form.errors %}
+      <div class="err-msg">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+      </div>
+      {% endif %}
+      <br>
     <button type="submit" class="btn btn-primary">Save</button>
     <a href="{% url 'teams_list' %}" class="btn btn-secondary">Cancel</a>
   </form>

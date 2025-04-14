@@ -11,7 +11,7 @@
 
     .mx-auto {
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+        box-shadow: 0 4px 12px #003366; 
         padding: 30px;
         width: 100%;
     }
@@ -38,8 +38,38 @@
         text-decoration: underline;
     }
 
-    p {
+    input[type="email"],
+    input[type="password"] {
+        box-sizing: border-box;
+        border: 1px solid #000000;
+        border-radius: 4px;
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        
+    }
 
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+        border-color: #000000;
+        outline: none;
+    }
+
+    label {
+        margin-top: 10px;
+        font-weight: bold;
+        color: black; 
+        font-size: 18px;
+    }
+
+    .text-danger{
+        margin-top: 5px;
+        margin-bottom: 5px;
+        color: black;
+        border: solid 0.5px;
+        border-radius: 4px;
+        background: #ffb09c; 
+        padding-left: 4px;
     }
 
 </style>
@@ -47,9 +77,17 @@
 <div class="container">
 <div class="mx-auto">
     <h2>Register</h2>
+    {% if messages %}
+        <div class="text-danger">
+            {% for mssg in messages %}
+                {{ mssg }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <form method="post" id="registrationForm">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form }}
         <button type="submit" class="btn btn-success w-100" id="registerButton">Sign Up</button>
     </form>
 

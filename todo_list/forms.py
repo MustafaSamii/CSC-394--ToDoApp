@@ -54,11 +54,9 @@ class TeamForm(forms.ModelForm):
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Team Name',
-                'required': 'required'  # Optionally enforce name as required too
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
-                'placeholder': 'Team Description',
-                'required': 'required'
+                'placeholder': 'Description',
             }),
         }
