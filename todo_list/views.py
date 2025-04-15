@@ -7,6 +7,8 @@ from django.utils import timezone
 from .models import ToDo, Team
 from .forms import ToDoForm, CustomUserCreationForm, TeamForm
 from django.contrib.auth.forms import AuthenticationForm
+from django.db import IntegrityError
+
 def landing(request):
     return render(request, 'landing.html')
 
@@ -35,16 +37,17 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 def register(request):
-    show_messages = True
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Registration successful. Please log in.")
-            return redirect('login')
+            try:
+                form.save()
+                messages.success(request, "Registration successful. Please log in.")
+                return redirect('login')
+            except IntegrityError:
+                form.add_error(None, "A user with that email already exists.")
         else:
-            if not messages.get_messages(request):
-                messages.error(request, "Failed To Register Succesfully. Please Try Again.")
+            messages.error(request, "Failed to register successfully. Please try again.")
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
