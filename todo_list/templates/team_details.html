@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    
     <!-- Display success/error messages if any -->
 {% if messages %}
   {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}" role="alert">
+    <div class="alert alert-danger" role="alert">
       {{ message }}
     </div>
   {% endfor %}
@@ -24,6 +23,22 @@
       text-align: center;
       padding: 20px;
   }
+
+  .alert {
+    margin-top: 10px;
+    margin-bottom: 10px; 
+    border-radius: 4px; 
+    padding: 1px; 
+    padding-left: 4px; 
+    font-size: 1rem; 
+    position: relative; 
+}
+
+.alert-danger {
+    background-color: light red;
+    color: black; 
+    border: 1px solid #f5c6cb; 
+}
 </style>
 
 <div class="mx-auto">
@@ -91,6 +106,11 @@
         <div class="col-md-4 mb-4">
           <div class="card h-100">
             <div class="card-body text-center">
+              {% if member.id == request.user.id %}
+                <p class="text-success"><strong>Team Owner</strong></p>
+              {% else %}
+                <p class="text-muted"><strong>Team Member</strong></p>
+              {% endif %}
               <img src="{% static 'images/default_profile.png' %}" alt="{{ member.email }}" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
               <h5 class="card-title">{{ member.email }}</h5>
               <form method="post" class="mt-2">

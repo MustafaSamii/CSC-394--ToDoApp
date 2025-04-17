@@ -32,7 +32,7 @@
   {% else %}
     <p>No teams available.</p>
   {% endif %}
-  <a href="{% url 'create_team' %}" class="btn btn-primary mt-3">Create New Team</a>
+  <a href="{% url 'create_team' %}" class="btn btn-primary mt-3">Create New Team</a> <br><br>
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">{{ message }}</div>

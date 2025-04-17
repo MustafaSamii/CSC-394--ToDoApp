@@ -31,14 +31,20 @@
         background-color: #0056b3;
     }
 
-    .err-msg {
-        margin-top: 5px;
-        margin-bottom: 5px;
-        color: black;
-        border: solid 0.5px;
-        border-radius: 4px;
-        background: #ffb09c; 
-        padding: 2px;
+    .alert {
+        margin-top: 10px;
+        margin-bottom: 10px; 
+        border-radius: 4px; 
+        padding: 1px; 
+        padding-left: 4px; 
+        font-size: 1rem; 
+        position: relative; 
+    }
+
+    .alert-danger {
+        background-color: light red;
+        color: black; 
+        border: 1px solid #f5c6cb; 
     }
 
 </style>
@@ -46,7 +52,16 @@
 <div class="container">
 <div class="mx-auto" style="max-width: 600px;">
     <h2>Create a New ToDo</h2>
+    
     <form method="post">
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <br>
         <label> Title: </label> <br>
         {{ form.name }}
         <br>
@@ -67,14 +82,7 @@
         <br>
 
         {% csrf_token %}
-        {% if form.errors %}
-            <div class="err-msg">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-        <br>
+        
         
         <button type="submit" class="btn btn-primary">Create</button>
         <a href="{% url 'dashboard' %}" class="btn btn-link">Cancel</a>

@@ -37,14 +37,20 @@
         text-decoration: underline;
     }
 
-    .text-danger{
-        margin-top: 5px;
-        margin-bottom: 5px;
-        color: black;
-        border: solid 0.5px;
-        border-radius: 4px;
-        background: #ffb09c; 
-        padding-left: 4px;
+    .alert {
+        margin-top: 10px;
+        margin-bottom: 10px; 
+        border-radius: 4px; 
+        padding: 1px; 
+        padding-left: 4px; 
+        font-size: 1rem; 
+        position: relative; 
+    }
+
+    .alert-danger {
+        background-color: light red;
+        color: black; 
+        border: 1px solid #f5c6cb; 
     }
 
     input[type="text"],
@@ -69,20 +75,20 @@
             <div class="mb-3">
                 <input type="text" name="username" placeholder="Email" class="form-control" required>
                 {% if form.username.errors %}
-                    <div class="text-danger">{{ form.username.errors.0 }}</div>
+                    <div class="alert alert-danger">{{ form.username.errors.0 }}</div>
                 {% endif %}
             </div>
 
             <div class="mb-3">
                 <input type="password" name="password" placeholder="Password" class="form-control" required>
                 {% if form.password.errors %}
-                    <div class="text-danger">{{ form.password.errors.0 }}</div>
+                    <div class="alert alert-danger">{{ form.password.errors.0 }}</div>
                 {% endif %}
             </div>
 
             {% if messages %}
                 {% for message in messages %}
-                    <div class="text-danger">{{ message }}</div>
+                    <div class="alert alert-danger">{{ message }}</div>
                 {% endfor %}
             {% endif %}
 

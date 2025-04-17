@@ -8,6 +8,7 @@ from .models import ToDo, Team
 from .forms import ToDoForm, CustomUserCreationForm, TeamForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.db import IntegrityError
+from django.utils.safestring import mark_safe
 
 def landing(request):
     return render(request, 'landing.html')
@@ -181,6 +182,13 @@ def team_details(request, team_id):
                 member = User.objects.get(id=member_id)
                 team.members.remove(member)
                 messages.success(request, "Member removed successfully!")
+
+                if not team.members.exists():
+                    name_team = team.name
+                    team.delete()
+                    messages.success(request, mark_safe(f"No members left in <strong>{name_team}</strong>. <strong>{name_team}</strong> deleted successfully."))
+                    return redirect('teams_list')
+                
             except User.DoesNotExist:
                 messages.error(request, "Member does not exist.")
         else:
