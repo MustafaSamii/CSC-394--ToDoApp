@@ -118,14 +118,11 @@
   {% if team.members.all %}
     <div class="row">
       {% for member in team.members.all %}
+      {% if member.id == team.owner.id %}
         <div class="col-md-4 mb-4">
           <div class="card h-100">
             <div class="card-body text-center">
-              {% if member.id == team.owner.id %}
-                <p class="text-success"><strong>Team Owner</strong></p>
-              {% else %}
-                <p class="text-muted"><strong>Team Member</strong></p>
-              {% endif %}
+              <p class="text-success"><strong>Team Owner</strong></p>
               <img src="{% static 'images/default_profile.png' %}" alt="{{ member.email }}" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
               <h5 class="card-title">{{ member.email }}</h5>
               <form method="post" class="mt-2">
@@ -136,6 +133,26 @@
             </div>
           </div>
         </div>
+      {% endif %}
+      {% endfor %}
+
+      {% for member in team.members.all %}
+      {% if member.id != team.owner.id %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body text-center">
+              <p class="text-muted"><strong>Team Member</strong></p>
+              <img src="{% static 'images/default_profile.png' %}" alt="{{ member.email }}" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+              <h5 class="card-title">{{ member.email }}</h5>
+              <form method="post" class="mt-2">
+                {% csrf_token %}
+                <input type="hidden" name="remove_member" value="{{ member.id }}">
+                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% endif %}
       {% endfor %}
     </div>
   {% else %}
