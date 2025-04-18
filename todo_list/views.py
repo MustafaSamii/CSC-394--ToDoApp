@@ -215,6 +215,8 @@ def create_team(request):
         if form.is_valid():
             team = form.save()
             # Automatically add the creator as a team member
+            team.owner = request.user
+            team.save()
             team.members.add(request.user)
             messages.success(request, "Team created successfully!")
             return redirect('team_details', team_id=team.id)

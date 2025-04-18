@@ -2,11 +2,18 @@
 {% load static %}
 {% block content %}
     <!-- Display success/error messages if any -->
+
 {% if messages %}
   {% for message in messages %}
-    <div class="alert alert-danger" role="alert">
-      {{ message }}
-    </div>
+    <div class=
+    "
+    {% if message.tags %}
+      {% if 'success' in message.tags %} alert alert-success
+      {% else %} alert alert-danger
+      {% endif %}
+    {% endif %}
+    
+    " role="alert"> {{ message }} </div>
   {% endfor %}
 {% endif %}
 
@@ -37,8 +44,16 @@
 .alert-danger {
     background-color: light red;
     color: black; 
-    border: 1px solid #f5c6cb; 
+    border: 1px solid red;
 }
+
+.alert-success {
+  background-color: light green;
+  color: black; 
+  border: 1px solid green;
+}
+
+
 </style>
 
 <div class="mx-auto">
@@ -106,7 +121,7 @@
         <div class="col-md-4 mb-4">
           <div class="card h-100">
             <div class="card-body text-center">
-              {% if member.id == request.user.id %}
+              {% if member.id == team.owner.id %}
                 <p class="text-success"><strong>Team Owner</strong></p>
               {% else %}
                 <p class="text-muted"><strong>Team Member</strong></p>
