@@ -9,6 +9,7 @@ from .forms import ToDoForm, CustomUserCreationForm, TeamForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.db import IntegrityError
 from django.utils.safestring import mark_safe
+from django.http import JsonResponse
 
 def landing(request):
     return render(request, 'landing.html')
@@ -25,6 +26,23 @@ def dashboard(request):
             output_field=IntegerField(),
         )
     )
+    f_categ = request.GET.get('category') # Filter for category
+    f_team = request.GET.get('team')    # Filter for team
+    
+    all_teams = Team.objects.all().distinct()
+    dis_categ = set()
+    for each in todos:
+        dis_categ.add(each.category)
+    
+    categs = list(dis_categ)
+    
+    if f_categ: # Apply category filter if it exist
+        todos = todos.filter(category = f_categ)
+        all_teams = Team.objects.filter( todo__user = request.user, todo__category = f_categ).distinct()
+    
+    if f_team: # Apply team filter if it exist
+        todos = todos.filter(team__id = f_team)
+        
     for todo in todos:
         if todo.status == 'In Progress' and todo.start_time:
             accumulated = todo.elapsed_time.total_seconds() if todo.elapsed_time else 0
@@ -34,6 +52,10 @@ def dashboard(request):
 
     context = {
         'todos': todos,
+        'categories': categs,
+        'pick_category': f_categ,
+        'pick_team': f_team,
+        'teams': all_teams, 
     }
     return render(request, 'dashboard.html', context)
 
@@ -271,4 +293,12 @@ def todos_list(request):
             todo.initial_elapsed = todo.elapsed_time.total_seconds() if todo.elapsed_time else 0
 
     return render(request, 'dashboard.html', {'todos': todos})
+
+    
+@login_required
+def get_categ_teams(request):
+    get_categ = request.GET.get('category')
+    filter_team = Team.objects.filter(todo__category = get_categ, todo__user = request.user).distinct().values('id', 'name')
+    
+    return JsonResponse({'teams': list(filter_team)})
 

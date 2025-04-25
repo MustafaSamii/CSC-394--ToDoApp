@@ -8,6 +8,17 @@
       width: 100%;
   }
 
+  .f-form {
+    display: flex;
+    gap: 15px;
+    
+  }
+
+  .f-container {
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+
 </style>
 
 <main class="container mt-5 text-start">
@@ -21,6 +32,47 @@
 
     {% if user.is_authenticated %}
       {% if todos %}
+        <div class="f-container">
+          <form method="get" class="f-form d-flex align-items-center">
+            <div class="form-floating">
+              <select name = "category" id = "category" class="form-select" id="floatingSelect">
+                <option value="" >  All Categories  </option>
+                {% for category in categories %}
+                  <option 
+                  {% if category == pick_category %}
+                    selected
+                  {% endif %} value="{{ category }}">
+                      {{ category }}
+                  </option>
+                {% endfor %}
+                
+              </select>
+              <label for="floatingSelect">Filter Category</label>
+            </div>
+
+            <div class="form-floating">
+              <select name="team" id="team" class="form-select" id="floatingSelect">
+                <option value="" >All Teams</option>
+                {% for team in teams %}
+                  <option value="{{ team.id }}" 
+                  {% if pick_team == team.id|stringformat:"s" %}
+                    selected
+                  {% endif %}> {{ team.name }} </option>
+                {% endfor %}
+              </select>
+              <label for="floatingSelect">Filter Teams</label>
+            </div>
+              
+              <div>
+                  <button type="submit" class="btn btn-primary">Apply Filters</button>
+                  {% if pick_category or pick_team %}
+                      <a class="btn btn-warning" href="{% url 'dashboard' %}">Clear</a>
+                  {% endif %}
+              </div>
+          </form>
+      </div>
+
+
         <ul class="list-group">
           {% for todo in todos %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -137,6 +189,45 @@ document.addEventListener("DOMContentLoaded", function(){
     document.querySelectorAll('.timer').forEach(function(timerElem) {
         updateTimer(timerElem);
     });
+
+    var getTeams = document.getElementById('team');
+    var getCategories = document.getElementById('category');
+    
+    if (getCategories) {
+      if(getTeams) {
+        // Storing the original team options
+        var origTeam = Array.from(getTeams.options);
+        
+        getCategories.addEventListener('change', function() {
+            var category = this.value;
+    
+            getTeams.value = null;
+
+            if (!category) {
+              while (getTeams.options.length > 1) {
+                getTeams.remove(1);
+              }
+              origTeam.slice(1).forEach(option => {
+                  getTeams.add(new Option(option.text, option.value));
+              });
+            } else {
+      
+              // Fetches the matching teams for the category selected.
+                fetch(`/get_category_team/?category=${encodeURIComponent(category)}`).then(res => res.json())
+                    .then(dt => {
+                        while (getTeams.options.length > 1) {
+                            getTeams.remove(1);
+                        }
+                        
+                        dt.teams.forEach(team => { // Adding filtered teams to the select option dropdown
+                            var opt = new Option(team.name, team.id);
+                            getTeams.add(opt);
+                        });
+                    });
+            } 
+        });
+      } 
+    }
 });
 </script>
 {% endblock %}
