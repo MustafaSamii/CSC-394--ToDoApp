@@ -37,8 +37,11 @@ def dashboard(request):
     categs = list(dis_categ)
     
     if f_categ: # Apply category filter if it exist
-        todos = todos.filter(category = f_categ)
-        all_teams = Team.objects.filter( todo__user = request.user, todo__category = f_categ).distinct()
+        if f_categ == 'None':
+            todos = todos.filter(category__exact=None)
+        else:
+            todos = todos.filter(category = f_categ)
+            all_teams = Team.objects.filter( todo__user = request.user, todo__category = f_categ).distinct()
     
     if f_team: # Apply team filter if it exist
         todos = todos.filter(team__id = f_team)
@@ -97,6 +100,8 @@ def create_todo(request):
         if form.is_valid():
             todo = form.save(commit=False)
             todo.user = request.user
+            if not todo.assigned_to:
+                todo.assigned_to = request.user
             # If the new ToDo is created as "In Progress", set the start time and elapsed time.
             if todo.status == 'In Progress':
                 todo.start_time = timezone.now()
@@ -107,7 +112,7 @@ def create_todo(request):
         else:
             return render(request, 'create_todo.html', {'form':form})
     else:
-        form = ToDoForm()
+        form = ToDoForm(user=request.user)
     return render(request, "create_todo.html", {"form": form})
 
 @login_required
@@ -122,7 +127,7 @@ def update_todo(request, todo_id):
     todo = get_object_or_404(ToDo, id=todo_id, user=request.user)
     previous_status = todo.status  # Save previous status
     if request.method == 'POST':
-        form = ToDoForm(request.POST, instance=todo)
+        form = ToDoForm(request.POST, instance=todo, user=request.user)
         if form.is_valid():
             updated_todo = form.save(commit=False)
             # If changing to "In Progress" and wasn't already, set start_time
@@ -134,7 +139,7 @@ def update_todo(request, todo_id):
             messages.success(request, "ToDo updated successfully.")
             return redirect('dashboard')
     else:
-        form = ToDoForm(instance=todo)
+        form = ToDoForm(instance=todo, user=request.user)
     return render(request, 'update_todo.html', {'form': form})
 
 @login_required

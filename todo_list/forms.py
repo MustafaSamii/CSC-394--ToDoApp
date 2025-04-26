@@ -4,18 +4,48 @@ from django.contrib.auth.models import User
 from .models import ToDo, Team
 
 class ToDoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        curr_user = kwargs.pop('user', None) # get current user and remove it
+        
+        # Initialize
+        super().__init__(*args, **kwargs)
+        
+        # Showing no users at first preventing all users to be shown at once
+        self.fields['assigned_to'].queryset = User.objects.none()
+        
+        
+        if self.instance and self.instance.team:
+            self.fields['assigned_to'].queryset = self.instance.team.members.all()
+            
+        elif 'team' in self.data:
+            try:
+                team_data = Team.objects.get(id = int(self.data.get('team')))
+                self.fields['assigned_to'].queryset = team_data.members.all()
+            except (ValueError, Team.DoesNotExist):
+                pass
+        
+        if curr_user:
+            self.fields['assigned_to'].initial = curr_user
+            
+            
     class Meta:
         model = ToDo
-        fields = ['name', 'description', 'status', 'category', 'due_date', 'team']
+        fields = ['name', 'description', 'status', 'category', 'due_date', 'team', 'assigned_to']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
             'category': forms.TextInput(attrs={'class': 'form-control'}),
-            # New widgets:
+
             'due_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'team': forms.Select(attrs={'class': 'form-select'}),
+            'team': forms.Select(attrs={'class': 'form-select', 'onchange': 'this.form.submit();'}),
+            'assigned_to': forms.Select(attrs={'class': 'form-select'}),
         }
+        
+
+        
+    
+    
 
 
 # Omit the username field since we use email instead. Important to re-visit this later @Amir @Sami

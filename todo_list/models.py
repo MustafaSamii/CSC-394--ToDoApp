@@ -22,6 +22,7 @@ class ToDo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     start_time = models.DateTimeField(blank=True, null=True)
     elapsed_time = models.DurationField(blank=True, null=True)
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_todos')
 
     def __str__(self):
         return self.name
@@ -29,6 +30,11 @@ class ToDo(models.Model):
     def clean(self):
         if not self.name or not self.due_date:
             raise ValidationError('To-Do Name and Due-Date are required.')
+        if not self.team:
+            raise ValidationError('Select a team before assigning the user.')
+        if not self.assigned_to:
+            raise ValidationError('Assign the user for the selected team.')
+
 
     def save(self, *args, **kwargs):
         self.clean() 
