@@ -86,4 +86,31 @@
     </form>
 </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const teamSel = document.querySelector('select[name="team"]');
+      const assignedSel = document.querySelector('select[name="assigned_to"]');
+  
+      if (teamSel && assignedSel) {
+        teamSel.addEventListener('change', function(){
+          const id = this.value;
+          // reset
+          assignedSel.innerHTML = '<option value="">----------</option>';
+          if (!id) return;
+          fetch(`/get_team_members/?team_id=${encodeURIComponent(id)}`)
+            .then(r=>r.json())
+            .then(json=>{
+              json.members.forEach(u=>{
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.text  = u.email;
+                assignedSel.add(opt);
+              });
+            });
+        });
+      }
+    });
+  </script>
+  
 {% endblock %}
