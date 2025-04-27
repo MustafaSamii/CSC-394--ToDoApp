@@ -2,97 +2,82 @@
 {% block content %}
 
 <style>
-
-    .container {
-        width: 100%;
-        max-width: 700px;
-        padding: 20px;
-        height: 100%;
-    }
-
-    .mx-auto {
-        border-radius: 8px;
-        box-shadow: 0 4px 12px #003366; 
-        padding: 30px;
-        width: 100%;
-    }
-
-    h2 {
-        text-align: center;
-        padding: 20px;
-    }
-
-    .btn-primary {
-        border-radius: 4px;
-        padding: 10px 20px;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-
-    .alert {
-        margin-top: 10px;
-        margin-bottom: 10px; 
-        border-radius: 4px; 
-        padding: 1px; 
-        padding-left: 4px; 
-        font-size: 1rem; 
-        position: relative; 
-    }
-
-    .alert-danger {
-        background-color: light red;
-        color: black; 
-        border: 1px solid #f5c6cb; 
-    }
-
+  .container { width:100%; max-width:700px; padding:20px; }
+  .mx-auto { border-radius:8px; box-shadow:0 4px 12px #003366; padding:30px; width:100%; }
+  h2 { text-align:center; padding:20px; }
+  .btn-primary { border-radius:4px; padding:10px 20px; }
+  .btn-primary:hover { background-color:#0056b3; }
+  .alert { margin:10px 0; border-radius:4px; padding:4px; font-size:1rem; }
+  .alert-danger { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
 </style>
 
 <div class="container">
-<div class="mx-auto" style="max-width: 600px;">
+  <div class="mx-auto" style="max-width:600px;">
     <h2>Create a New ToDo</h2>
-    
-    <form id = "myForm" method="post">
-        {% if form.errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-        <br>
-        <label> Title: </label> <br>
-        {{ form.name }}
-        <br>
-        <label> Description: </label>
-        {{ form.description }}
-        <br>
-        <label> Status: </label>
-        {{ form.status }}
-        <br>
-        <label> Category: </label>
-        {{ form.category }}
-        <br>
-        <label> Due Date: </label>
-        {{ form.due_date }}
-        <br>
-        <label> Team: </label>
-        {{ form.team }}
-        <br>
-        <label> Assigned To: </label>
-        {{ form.assigned_to }}
-        <br><br>
 
+    <form method="post" id="myForm">
+      {% csrf_token %}
 
-        {% csrf_token %}
-        
-        
-        <button type="submit" class="btn btn-primary">Create</button>
-        <a href="{% url 'dashboard' %}" class="btn btn-link">Cancel</a>
+      {# only show this error block if user actually clicked Create #}
+      {% if is_create and form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for e in form.non_field_errors %}
+            {{ e }}<br>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <label>Title:</label><br>
+      {{ form.name }}<br><br>
+
+      <label>Description:</label><br>
+      {{ form.description }}<br><br>
+
+      <label>Status:</label><br>
+      {{ form.status }}<br><br>
+
+      <label>Category:</label><br>
+      {{ form.category }}<br><br>
+
+      <label>Due Date:</label><br>
+      {{ form.due_date }}<br><br>
+
+      <label>Team:</label><br>
+      {{ form.team }}<br><br>
+
+      <label>Assigned To:</label><br>
+      {{ form.assigned_to }}<br><br>
+
+      <button type="submit" name="create" class="btn btn-primary">Create</button>
+      <a href="{% url 'dashboard' %}" class="btn btn-link">Cancel</a>
     </form>
-</div>
+  </div>
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    const teamSel = document.querySelector('select[name="team"]');
+    const assignedSel = document.querySelector('select[name="assigned_to"]');
+
+    if (teamSel && assignedSel) {
+      teamSel.addEventListener('change', function(){
+        const id = this.value;
+        // reset
+        assignedSel.innerHTML = '<option value="">----------</option>';
+        if (!id) return;
+        fetch(`/get_team_members/?team_id=${encodeURIComponent(id)}`)
+          .then(r=>r.json())
+          .then(json=>{
+            json.members.forEach(u=>{
+              const opt = document.createElement('option');
+              opt.value = u.id;
+              opt.text  = u.email;
+              assignedSel.add(opt);
+            });
+          });
+      });
+    }
+  });
+</script>
 
 {% endblock %}

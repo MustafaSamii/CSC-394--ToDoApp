@@ -95,25 +95,48 @@ def logout_view(request):
 
 @login_required
 def create_todo(request):
+    is_create = False
     if request.method == "POST":
-        form = ToDoForm(request.POST)
-        if form.is_valid():
-            todo = form.save(commit=False)
-            todo.user = request.user
-            if not todo.assigned_to:
-                todo.assigned_to = request.user
-            # If the new ToDo is created as "In Progress", set the start time and elapsed time.
-            if todo.status == 'In Progress':
-                todo.start_time = timezone.now()
-                todo.elapsed_time = timezone.timedelta(0)
-            todo.save()
-            messages.success(request, "ToDo created successfully!")
-            return redirect('dashboard')
-        else:
-            return render(request, 'create_todo.html', {'form':form})
-    else:
-        form = ToDoForm(user=request.user)
-    return render(request, "create_todo.html", {"form": form})
+        form = ToDoForm(request.POST, user=request.user)
+        if 'create' in request.POST:
+            is_create = True
+            if form.is_valid():
+                todo = form.save(commit=False)
+                todo.user = request.user
+                if not todo.assigned_to:
+                    todo.assigned_to = request.user
+                if todo.status == 'In Progress':
+                    todo.start_time = timezone.now()
+                    todo.elapsed_time = timezone.timedelta(0)
+                todo.save()
+                messages.success(request, "ToDo created successfully!")
+                return redirect('dashboard')
+        return render(request, 'create_todo.html', {
+            'form': form, 'is_create': is_create
+        })
+    form = ToDoForm(user=request.user)
+    return render(request, 'create_todo.html', {
+        'form': form, 'is_create': False
+    })
+
+@login_required
+def get_team_members(request):
+    """
+    AJAX endpoint: given ?team_id=, return JSON list of {id,email}.
+    """
+    team_id = request.GET.get('team_id')
+    members = []
+    if team_id:
+        try:
+            team = Team.objects.get(pk=team_id)
+            members = [
+                {'id': u.id, 'email': u.email}
+                for u in team.members.all()
+            ]
+        except Team.DoesNotExist:
+            members = []
+    return JsonResponse({'members': members})
+
 
 @login_required
 def delete_todo(request, todo_id):
@@ -288,17 +311,8 @@ def toggle_status(request, todo_id):
 
 @login_required
 def todos_list(request):
-    todos = ToDo.objects.filter(user=request.user)
-
-    for todo in todos:
-        if todo.status == 'In Progress' and todo.start_time:
-            accumulated = todo.elapsed_time.total_seconds() if todo.elapsed_time else 0
-            todo.initial_elapsed = accumulated + (timezone.now() - todo.start_time).total_seconds()
-        else:
-            todo.initial_elapsed = todo.elapsed_time.total_seconds() if todo.elapsed_time else 0
-
-    return render(request, 'dashboard.html', {'todos': todos})
-
+    # no longer needed, since /todos now goes to dashboard()
+    return dashboard(request)
     
 @login_required
 def get_categ_teams(request):

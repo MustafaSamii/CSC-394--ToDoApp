@@ -2,77 +2,71 @@
 {% block content %}
 <style>
   .mx-auto {
-      border-radius: 8px;
-      box-shadow: 0 4px 12px #003366; 
-      padding: 30px;
-      width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px #003366;
+    padding: 30px;
+    width: 100%;
   }
 
   .f-form {
     display: flex;
     gap: 15px;
-    
   }
 
   .f-container {
     padding: 5px;
     margin-bottom: 10px;
   }
-
 </style>
 
 <main class="container mt-5 text-start">
   <div class="mx-auto">
+    <!-- Header with title + always-visible New ToDo -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>Your Dashboard</h2>
-      {% if todos %}
-        <a href="{% url 'create_todo' %}" class="btn btn-primary">New ToDo</a>
-      {% endif %}
+      <a href="{% url 'create_todo' %}" class="btn btn-primary">New ToDo</a>
     </div>
 
     {% if user.is_authenticated %}
-      {% if todos %}
-        <div class="f-container">
-          <form method="get" class="f-form d-flex align-items-center">
-            <div class="form-floating">
-              <select name = "category" id = "category" class="form-select" id="floatingSelect">
-                <option value="" >  All Categories  </option>
-                {% for category in categories %}
-                  <option 
-                  {% if category == pick_category %}
-                    selected
-                  {% endif %} value="{{ category }}">
-                      {{ category }}
-                  </option>
-                {% endfor %}
-                
-              </select>
-              <label for="floatingSelect">Filter Category</label>
-            </div>
+      <!-- Filter bar always shown -->
+      <div class="f-container">
+        <form method="get" class="f-form align-items-center">
+          <div class="form-floating">
+            <select name="category" id="category" class="form-select">
+              <option value="" {% if not pick_category %}selected{% endif %}>All Categories</option>
+              {% for category in categories %}
+                <option value="{{ category }}"
+                  {% if category == pick_category %}selected{% endif %}>
+                  {{ category }}
+                </option>
+              {% endfor %}
+            </select>
+            <label for="category">Filter Category</label>
+          </div>
 
-            <div class="form-floating">
-              <select name="team" id="team" class="form-select" id="floatingSelect">
-                <option value="" >All Teams</option>
-                {% for team in teams %}
-                  <option value="{{ team.id }}" 
-                  {% if pick_team == team.id|stringformat:"s" %}
-                    selected
-                  {% endif %}> {{ team.name }} </option>
-                {% endfor %}
-              </select>
-              <label for="floatingSelect">Filter Teams</label>
-            </div>
-              
-              <div>
-                  <button type="submit" class="btn btn-primary">Apply Filters</button>
-                  {% if pick_category or pick_team %}
-                      <a class="btn btn-warning" href="{% url 'dashboard' %}">Clear</a>
-                  {% endif %}
-              </div>
-          </form>
+          <div class="form-floating">
+            <select name="team" id="team" class="form-select">
+              <option value="" {% if not pick_team %}selected{% endif %}>All Teams</option>
+              {% for team in teams %}
+                <option value="{{ team.id }}"
+                  {% if pick_team == team.id|stringformat:"s" %}selected{% endif %}>
+                  {{ team.name }}
+                </option>
+              {% endfor %}
+            </select>
+            <label for="team">Filter Teams</label>
+          </div>
+
+          <div class="d-flex align-items-center">
+            <button type="submit" class="btn btn-primary me-2">Apply Filters</button>
+            {% if pick_category or pick_team %}
+              <a href="{% url 'dashboard' %}" class="btn btn-warning">Clear</a>
+            {% endif %}
+          </div>
+        </form>
       </div>
 
-
+      {% if todos %}
         <ul class="list-group">
           {% for todo in todos %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -80,7 +74,6 @@
                 <h5>{{ todo.name }}</h5>
                 <p>{{ todo.description }}</p>
                 <p><strong>Category:</strong> {{ todo.category }}</p>
-                {# New block added for requirement R15: display team name if available #}
                 {% if todo.team %}
                   <p><strong>Team:</strong> {{ todo.team.name }}</p>
                 {% endif %}
@@ -99,15 +92,19 @@
                 </p>
                 {% if todo.status == "In Progress" %}
                   <div>
-                    Timer: <span class="timer" data-initial="{{ todo.initial_elapsed|floatformat:0 }}">{{ todo.formatted_elapsed }}</span>
+                    Timer:
+                    <span class="timer" data-initial="{{ todo.initial_elapsed|floatformat:0 }}">
+                      {{ todo.formatted_elapsed }}
+                    </span>
                   </div>
-                {% elif todo.status == "Paused" or todo.status == "Completed" %}
+                {% else %}
                   <div>
                     Timer: {{ todo.formatted_elapsed }}
                   </div>
                 {% endif %}
               </div>
               <div class="btn-group" role="group">
+                {# Explicit or-check instead of split filter #}
                 {% if todo.status == "Not Started" or todo.status == "Completed" %}
                   <a href="{% url 'update_todo_status' todo.id 'start' %}" class="btn btn-sm btn-success">Start</a>
                 {% elif todo.status == "In Progress" %}
@@ -118,23 +115,22 @@
                   <a href="{% url 'update_todo_status' todo.id 'stop' %}" class="btn btn-sm btn-secondary">Stop</a>
                 {% endif %}
                 <a href="{% url 'update_todo' todo.id %}" class="btn btn-sm btn-primary">Edit</a>
-                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ todo.id }}">
+                <button type="button" class="btn btn-sm btn-danger"
+                        data-bs-toggle="modal" data-bs-target="#deleteModal{{ todo.id }}">
                   Delete
                 </button>
               </div>
             </li>
 
             <!-- Delete Confirmation Modal -->
-            <div class="modal fade" id="deleteModal{{ todo.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ todo.id }}" aria-hidden="true">
+            <div class="modal fade" id="deleteModal{{ todo.id }}" tabindex="-1" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel{{ todo.id }}">Confirm Deletion</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                   </div>
-                  <div class="modal-body">
-                    Are you sure you wish to delete this item?
-                  </div>
+                  <div class="modal-body">Are you sure you wish to delete this item?</div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <form method="post" action="{% url 'delete_todo' todo.id %}">
@@ -148,86 +144,65 @@
           {% endfor %}
         </ul>
       {% else %}
-        <p class="lead">No ToDo's</p>
-        <a href="{% url 'create_todo' %}" class="btn btn-primary">Create ToDo</a> <br> <br>
+        <p class="lead">No ToDo’s</p>
       {% endif %}
+
     {% else %}
       <p class="lead">
-        Please <a href="{% url 'login' %}">Login</a> or 
+        Please <a href="{% url 'login' %}">Login</a> or
         <a href="{% url 'register' %}">Register</a> to start.
       </p>
     {% endif %}
+
     {% if messages %}
       {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
       {% endfor %}
     {% endif %}
   </div>
 </main>
 
-<!-- Timer script for the dashboard -->
+<!-- Timer + filter-ajax script (unchanged) -->
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-    var pageLoadTime = performance.now() / 1000;
-    function formatTime(seconds) {
-        var hrs = Math.floor(seconds / 3600);
-        var mins = Math.floor((seconds % 3600) / 60);
-        var secs = Math.floor(seconds % 60);
-        return hrs + ":" + (mins < 10 ? "0" : "") + mins + ":" + (secs < 10 ? "0" : "") + secs;
+  var pageLoadTime = performance.now() / 1000;
+  function formatTime(s) {
+    var h = Math.floor(s/3600),
+        m = Math.floor((s%3600)/60),
+        sec = Math.floor(s%60);
+    return h + ":" + (m<10?"0":"") + m + ":" + (sec<10?"0":"") + sec;
+  }
+  function updateTimer(el){
+    var init = parseFloat(el.getAttribute('data-initial'));
+    if(!isNaN(init)){
+      var extra = (performance.now()/1000) - pageLoadTime;
+      el.innerText = formatTime(init + extra);
     }
-    function updateTimer(timerElem) {
-        var initial = parseFloat(timerElem.getAttribute('data-initial'));
-        if (!isNaN(initial)) {
-            var additional = (performance.now() / 1000) - pageLoadTime;
-            var elapsed = initial + additional;
-            timerElem.innerText = formatTime(elapsed);
-        }
-        requestAnimationFrame(function() {
-            updateTimer(timerElem);
-        });
-    }
-    document.querySelectorAll('.timer').forEach(function(timerElem) {
-        updateTimer(timerElem);
+    requestAnimationFrame(()=> updateTimer(el));
+  }
+  document.querySelectorAll('.timer').forEach(updateTimer);
+
+  var cats = document.getElementById('category'),
+      teams = document.getElementById('team');
+  if(cats && teams){
+    var orig = Array.from(teams.options);
+    cats.addEventListener('change', function(){
+      var c = this.value;
+      teams.value = "";
+      while(teams.options.length > 1) teams.remove(1);
+      if(c){
+        fetch(`/get_category_team/?category=${encodeURIComponent(c)}`)
+          .then(r=>r.json())
+          .then(d=>{
+            d.teams.forEach(t=>{
+              teams.add(new Option(t.name, t.id));
+            });
+          });
+      } else {
+        orig.slice(1).forEach(o=> teams.add(new Option(o.text, o.value)));
+      }
     });
-
-    var getTeams = document.getElementById('team');
-    var getCategories = document.getElementById('category');
-    
-    if (getCategories) {
-      if(getTeams) {
-        // Storing the original team options
-        var origTeam = Array.from(getTeams.options);
-        
-        getCategories.addEventListener('change', function() {
-            var category = this.value;
-    
-            getTeams.value = null;
-
-            if (!category) {
-              while (getTeams.options.length > 1) {
-                getTeams.remove(1);
-              }
-              origTeam.slice(1).forEach(option => {
-                  getTeams.add(new Option(option.text, option.value));
-              });
-            } else {
-      
-              // Fetches the matching teams for the category selected.
-                fetch(`/get_category_team/?category=${encodeURIComponent(category)}`).then(res => res.json())
-                    .then(dt => {
-                        while (getTeams.options.length > 1) {
-                            getTeams.remove(1);
-                        }
-                        
-                        dt.teams.forEach(team => { // Adding filtered teams to the select option dropdown
-                            var opt = new Option(team.name, team.id);
-                            getTeams.add(opt);
-                        });
-                    });
-            } 
-        });
-      } 
-    }
+  }
 });
 </script>
 {% endblock %}
